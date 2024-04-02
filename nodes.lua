@@ -36,67 +36,7 @@ boulder_shape = minetest.settings:get("boulder_shape") or "default"
 
 
 if minetest.get_modpath("boulder_dig") then
-	if (boulder_shape == "default" or boulder_shape == "block") then
-		minetest.register_node("boulders:boulder", {
-			description = "Boulder",
-			tiles = {"default_gravel.png^[colorize:black:77"},
-			--tiles = {"boulder.png"},
-			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
-			sounds = default.node_sound_boulder_defaults(),
-			--sounds = default.node_sound_gravel_defaults(),
-			drop = {
-				max_items = 1,
-				items = {
-					{items = {"boulders:boulder"}}
-				}
-			}
-		})
-	else
-		minetest.register_node("boulders:boulder", {
-		description = "Boulder",
-		drawtype = "mesh",
-
-		mesh = "boulder.obj",
-		--[[on_place = function(itemstack, placer, pointed_thing)
-			local pointed_pos = minetest.get_pointed_thing_position(pointed_thing, true)
-			local return_value = minetest.item_place(itemstack, placer, pointed_thing, math.random(0,3))
-			local pointed_node = minetest.get_node(pointed_pos)
-
-			if pointed_node and pointed_node.name then
-				local node_def = minetest.registered_nodes[pointed_node.name]
-				if node_def and node_def.buildable_to == true then
-				else
-				minetest.set_node(pointed_pos, {name = "boulder_dig:boulder",
-												 param2 = math.random(0,3)})
-
-				end
-			end
-			return return_value
-		end,]]
-		groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
-		sounds = default.node_sound_boulder_defaults(),
-		drop = {
-			max_items = 1,
-			items = {
-				{items = {"boulder_dig:boulder"}}
-			}
-		},
-		tiles = {"default_stone.png"},
-	})
-	end
-	minetest.register_ore({
-		ore_type = "scatter",
-		ore = "boulders:boulder",
-		wherein = "default:dirt",
-		clust_scarcity = 4 * 4 * 4,
-		clust_num_ores = 8,
-		clust_size = 4,
-		height_min = -31000,
-		height_max = 10000,
-	})
-else --boulder_dig mod not loaded
-minetest.log("x", "boulder_shape:"..boulder_shape)
-	if(boulder_shape == "default" or boulder_shape == "round") then
+	if (boulder_shape == "round") then
 		minetest.register_node("boulders:boulder", {
 			description = "Boulder",
 			drawtype = "mesh",
@@ -130,21 +70,81 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 		})
 	else
 		minetest.register_node("boulders:boulder", {
-		description = "Boulder",
-		tiles = {"default_gravel.png^[colorize:black:77"},
-		--tiles = {"boulder.png"},
-		groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
-		sounds = default.node_sound_boulder_defaults(),
-		--sounds = default.node_sound_gravel_defaults(),
-		drop = {
-			max_items = 1,
-			items = {
-				{items = {"boulders:boulder"}}
+			description = "Boulder",
+			--tiles = {"default_gravel.png^[colorize:black:77"},
+			tiles = {"boulder.png"},
+			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
+			sounds = default.node_sound_boulder_defaults(),
+			--sounds = default.node_sound_gravel_defaults(),
+			drop = {
+				max_items = 1,
+				items = {
+					{items = {"boulders:boulder"}}
+				}
 			}
-		}
-	})
+		})
 	end
-	
+	minetest.register_ore({
+		ore_type = "scatter",
+		ore = "boulders:boulder",
+		wherein = "default:dirt",
+		clust_scarcity = 4 * 4 * 4,
+		clust_num_ores = 8,
+		clust_size = 4,
+		height_min = -31000,
+		height_max = 10000,
+	})
+else --boulder_dig mod not loaded
+minetest.log("x", "boulder_shape:"..boulder_shape)
+	if(boulder_shape == "block") then
+		minetest.register_node("boulders:boulder", {
+			description = "Boulder",
+			--tiles = {"default_gravel.png^[colorize:black:77"},
+			tiles = {"boulder.png"},
+			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
+			sounds = default.node_sound_boulder_defaults(),
+			--sounds = default.node_sound_gravel_defaults(),
+			drop = {
+				max_items = 1,
+				items = {
+					{items = {"boulders:boulder"}}
+				}
+			}
+		})
+
+	else
+		minetest.register_node("boulders:boulder", {
+			description = "Boulder",
+			drawtype = "mesh",
+
+			mesh = "boulder.obj",
+			--[[on_place = function(itemstack, placer, pointed_thing)
+				local pointed_pos = minetest.get_pointed_thing_position(pointed_thing, true)
+				local return_value = minetest.item_place(itemstack, placer, pointed_thing, math.random(0,3))
+				local pointed_node = minetest.get_node(pointed_pos)
+
+				if pointed_node and pointed_node.name then
+					local node_def = minetest.registered_nodes[pointed_node.name]
+					if node_def and node_def.buildable_to == true then
+					else
+					minetest.set_node(pointed_pos, {name = "boulder_dig:boulder",
+													 param2 = math.random(0,3)})
+
+					end
+				end
+				return return_value
+			end,]]
+			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
+			sounds = default.node_sound_boulder_defaults(),
+			drop = {
+				max_items = 1,
+				items = {
+					{items = {"boulder_dig:boulder"}}
+				}
+			},
+			tiles = {"default_stone.png"},
+		})
+	end
 	stone_and_dirt = {"default:stone","default:dirt"}
 	minetest.register_ore({
 		ore_type = "scatter",

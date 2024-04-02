@@ -1,2 +1,2 @@
-# Set shape of boulder nodes. Suggested values "block", "round", "default"
-boulder_shape (Specify shape of boulders  "block", "round", "default") string default
+# Set shape of boulder nodes. Suggested values: block, round, default
+boulder_shape (Specify shape of boulders:  block, round, default) string default
