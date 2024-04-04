@@ -33,9 +33,16 @@ end
 
 boulder_shape = minetest.settings:get("boulder_shape") or "default"
 
-
+	wherein_boulders = {"default:stone","group:crumbly"}
 
 if minetest.get_modpath("boulder_dig") then
+	boulder_cluster_scarcity = 7 * 7 * 7
+else
+	boulder_cluster_scarcity =  9 * 9 * 9
+end
+	
+--if minetest.get_modpath("boulder_dig") then
+if boulder_cluster_scarcity < 7 * 7 * 7 then
 	if (boulder_shape == "round") then
 		minetest.register_node("boulders:boulder", {
 			description = "Boulder",
@@ -84,11 +91,14 @@ if minetest.get_modpath("boulder_dig") then
 			}
 		})
 	end
+	--dirt = {"default:stone","default:dirt","default:dry_dirt"}
+
 	minetest.register_ore({
 		ore_type = "scatter",
 		ore = "boulders:boulder",
-		wherein = "default:dirt",
-		clust_scarcity = 4 * 4 * 4,
+		wherein = wherein_boulders,
+		---clust_scarcity = 4 * 4 * 4,
+		clust_scarcity = boulder_cluster_scarcity,
 		clust_num_ores = 8,
 		clust_size = 4,
 		height_min = -31000,
@@ -145,13 +155,13 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			tiles = {"default_stone.png"},
 		})
 	end
-	stone_and_dirt = {"default:stone","default:dirt"}
+	--stone_and_dirt = {"default:stone","default:dirt","default:dry_dirt"}
 	minetest.register_ore({
 		ore_type = "scatter",
 		ore = "boulders:boulder",
 		--wherein = "default:stone",
-		wherein = stone_and_dirt,
-		clust_scarcity = 9 * 9 * 9,
+		wherein = wherein_boulders,
+		clust_scarcity = boulder_cluster_scarcity,
 		clust_num_ores = 7,
 		clust_size = 4,
 		height_min = -31000,
