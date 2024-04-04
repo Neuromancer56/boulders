@@ -33,7 +33,8 @@ end
 
 boulder_shape = minetest.settings:get("boulder_shape") or "default"
 
-	wherein_boulders = {"default:stone","group:crumbly"}
+	--wherein_boulders = {"default:stone","group:crumbly"}
+	wherein_boulders = {"default:stone","default:dirt","default:dry_dirt"}
 
 if minetest.get_modpath("boulder_dig") then
 	boulder_cluster_scarcity = 7 * 7 * 7
