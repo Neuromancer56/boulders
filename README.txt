@@ -22,7 +22,7 @@ Boulder Dash  gameplay can be seen here: https://www.youtube.com/watch?v=FiEVfa1
 
 The plan is to have all of these "boulder_dig" mods function as stand alone mods so that they can combined in other ways with other mods to work with and create other games.
 
-From [Wikipedia] https://en.wikipedia.org/wiki/Boulder_Dash_(video_game):
+From [Wikipedia] https://en.wikipedia.org/wiki/Boulder_Dash_(video_game) :
 
 > Boulder Dash takes place in a series of caves, each of which is laid out as rectangular grid of blocks. The player guides the player character, Rockford, with a joystick or arrow keys. In each cave, Rockford has to collect as many diamonds as are needed and avoid dangers, such as falling rocks. When enough diamonds have been collected, the exit door opens, and going through this exit door completes the cave.
 	 
