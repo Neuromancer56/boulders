@@ -191,6 +191,75 @@ minetest.register_craft({
 	}
 })
 
+function check_for_tumbling(pos)
+	local x_start = -1
+	local x_end = 1
+	local y_start = -1
+	local y_end = 1
+	local z_start = -1
+	local z_end = 1
+	for dx = x_start, x_end do
+	--minetest.log("x","dx:"..dx)	
+		for dy = 0, 0 do
+			for dz = z_start, z_end do
+				--minetest.log("x","dz:"..dz)	
+				local boulder_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
+				local node = minetest.get_node(boulder_pos)
+				local under_boulder_pos = {x = boulder_pos.x, y = boulder_pos.y -1, z = boulder_pos.z}
+				local node_under_boulder = minetest.get_node(under_boulder_pos)
+				if (node.name == "boulders:boulder")then 
+					local boulder_tumbled = false
+					if (node_under_boulder.name == "boulders:boulder") then
+						--check all 4 directions 1 node below
+						x_neg_pos = {x = boulder_pos.x -1, y = boulder_pos.y -1, z = boulder_pos.z}
+						x_neg_node = minetest.get_node(x_neg_pos)
+						x_pos_pos = {x = boulder_pos.x +1, y = boulder_pos.y -1, z = boulder_pos.z}
+						x_pos_node = minetest.get_node(x_pos_pos)
+						z_neg_pos = {x = boulder_pos.x, y = boulder_pos.y -1, z = boulder_pos.z -1}
+						z_neg_node = minetest.get_node(z_neg_pos)
+						z_pos_pos = {x = boulder_pos.x, y = boulder_pos.y -1, z = boulder_pos.z +1}
+						z_pos_node = minetest.get_node(z_pos_pos)
+						above_x_neg_pos = {x = boulder_pos.x -1, y = boulder_pos.y, z = boulder_pos.z}
+						above_x_neg_node = minetest.get_node(above_x_neg_pos)
+						above_x_pos_pos = {x = boulder_pos.x +1, y = boulder_pos.y, z = boulder_pos.z}
+						above_x_pos_node = minetest.get_node(above_x_pos_pos)
+						above_z_neg_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z -1}
+						above_z_neg_node = minetest.get_node(above_z_neg_pos)
+						above_z_pos_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z +1}
+						above_z_pos_node = minetest.get_node(above_z_pos_pos)
+						local start_tumble_pos = nil
+						local boulder_tumbled = false
+						if(x_neg_node.name == "air" and above_x_neg_node.name == "air")then 
+							minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
+							start_tumble_pos = {x = boulder_pos.x -1, y = boulder_pos.y , z = boulder_pos.z}
+							minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
+							boulder_tumbled = true
+						elseif (x_pos_node.name == "air" and above_x_pos_node.name == "air")then 
+							minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
+							start_tumble_pos = {x = boulder_pos.x + 1, y = boulder_pos.y , z = boulder_pos.z}
+							minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
+							boulder_tumbled = true
+						elseif(z_neg_node.name == "air" and above_z_neg_node.name == "air")then 
+							minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
+							start_tumble_pos = {x = boulder_pos.x, y = boulder_pos.y , z = boulder_pos.z-1}
+							minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
+							boulder_tumbled = true
+						elseif (z_pos_node.name == "air" and above_z_pos_node.name == "air")then 
+							minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
+							start_tumble_pos = {x = boulder_pos.x, y = boulder_pos.y , z = boulder_pos.z+1}
+							minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
+							boulder_tumbled = true
+						end
+						if boulder_tumbled == true then
+							minetest.sound_play("falling_boulder", {pos = pos, gain = 0.5, max_hear_distance = 10}) 
+							minetest.check_for_falling(start_tumble_pos)	
+						end							
+					end
+				end
+			end
+		end
+	end
+end
 
 
 
@@ -227,6 +296,7 @@ local function boulderTouchAction(player)
 	--minetest.log("x","x_start:"..x_start..", x_end:"..x_end)	
 	--minetest.log("x","z_start:"..z_start..", z_end:"..z_end)	
 	local boulder_rolled = false
+	local boulder_new_pos = nil
 
 	for dx = x_start, x_end do
 		--minetest.log("x","dx:"..dx)	
@@ -234,35 +304,35 @@ local function boulderTouchAction(player)
 			for dz = z_start, z_end do
 				--minetest.log("x","dz:"..dz)	
 				local neighbor_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
-				local boulder_new_pos = {x = pos.x + dx + dx, y = pos.y + dy, z = pos.z + dz +dz}
+				boulder_new_pos = {x = pos.x + dx + dx, y = pos.y + dy, z = pos.z + dz +dz}
 				local node = minetest.get_node(neighbor_pos)
 				local boulder_new_pos_node = minetest.get_node(boulder_new_pos)
 				
 				if (node.name == "boulders:boulder" and boulder_new_pos_node.name == "air"  )then
 					minetest.set_node(neighbor_pos, {name = "air", param2 = node.param2})
 					minetest.set_node(boulder_new_pos, {name = "boulders:boulder", param2 = node.param2})
-					boulder_rolled = true
+					boulder_rolled = true					
 							
 				end
 			end
 		end
 	end
     if boulder_rolled then 
-		minetest.sound_play("falling_boulder", {pos = pos, gain = 0.5, max_hear_distance = 10}) 
-		
-	for dx = x_start, x_end do
-		--minetest.log("x","dx:"..dx)	
-		for dy = -1, 2 do
-			for dz = z_start, z_end do
-				--minetest.log("x","dz:"..dz)	
-				local neighbor_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
-				local node = minetest.get_node(neighbor_pos)
-				minetest.check_for_falling(neighbor_pos)
+		minetest.sound_play("falling_boulder", {pos = pos, gain = 0.5, max_hear_distance = 10}) 		
+		for dx = x_start, x_end do
+			--minetest.log("x","dx:"..dx)	
+			for dy = -1, 2 do
+				for dz = z_start, z_end do
+					--minetest.log("x","dz:"..dz)	
+					local neighbor_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
+					local node = minetest.get_node(neighbor_pos)
+					minetest.check_for_falling(neighbor_pos)
+				end
 			end
 		end
+		check_for_tumbling(boulder_new_pos)
 	end
-	end
-		--minetest.log("x","x:"..neighbor_pos.x ..",z:"..neighbor_pos.z)		
+		--minetest.log("x","x:"..neighbor_pos.x ..",z:"..neighbor_pos.z)
 	
 end
 
