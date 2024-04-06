@@ -1,5 +1,3 @@
---manual changes: 
-
 local function add_fall_damage(node, damage)
 
 	if minetest.registered_nodes[node] then
@@ -25,8 +23,6 @@ function default.node_sound_boulder_defaults(table)
 			{name = "default_hard_footstep", gain = 1.0}
 	table.place = table.place or
 			{name = "falling_boulder", gain = 1.0}
-			--{name = "default_dug_node", gain = 1.0}
-			--{name = "default_place_node", gain = 1.0}
 	default.node_sound_defaults(table)
 	return table
 end
@@ -42,7 +38,6 @@ else
 	boulder_cluster_scarcity =  9 * 9 * 9
 end
 	
---if minetest.get_modpath("boulder_dig") then
 if boulder_cluster_scarcity < 7 * 7 * 7 then
 	if (boulder_shape == "round") then
 		minetest.register_node("boulders:boulder", {
@@ -50,22 +45,6 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 			drawtype = "mesh",
 
 			mesh = "boulder.obj",
-			--[[on_place = function(itemstack, placer, pointed_thing)
-				local pointed_pos = minetest.get_pointed_thing_position(pointed_thing, true)
-				local return_value = minetest.item_place(itemstack, placer, pointed_thing, math.random(0,3))
-				local pointed_node = minetest.get_node(pointed_pos)
-
-				if pointed_node and pointed_node.name then
-					local node_def = minetest.registered_nodes[pointed_node.name]
-					if node_def and node_def.buildable_to == true then
-					else
-					minetest.set_node(pointed_pos, {name = "boulder_dig:boulder",
-													 param2 = math.random(0,3)})
-
-					end
-				end
-				return return_value
-			end,]]
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
 			drop = {
@@ -75,15 +54,19 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 				}
 			},
 			tiles = {"default_stone.png"},
+			on_construct = function(pos, node)
+				check_for_tumbling(pos)
+			end,
 		})
 	else
 		minetest.register_node("boulders:boulder", {
 			description = "Boulder",
-			--tiles = {"default_gravel.png^[colorize:black:77"},
 			tiles = {"boulder.png"},
+			on_construct = function(pos, node)
+				check_for_tumbling(pos)
+			end,
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
-			--sounds = default.node_sound_gravel_defaults(),
 			drop = {
 				max_items = 1,
 				items = {
@@ -92,7 +75,6 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 			}
 		})
 	end
-	--dirt = {"default:stone","default:dirt","default:dry_dirt"}
 
 	minetest.register_ore({
 		ore_type = "scatter",
@@ -110,11 +92,12 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 	if(boulder_shape == "block") then
 		minetest.register_node("boulders:boulder", {
 			description = "Boulder",
-			--tiles = {"default_gravel.png^[colorize:black:77"},
 			tiles = {"boulder.png"},
+			on_construct = function(pos, node)
+				check_for_tumbling(pos)
+			end,
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
-			--sounds = default.node_sound_gravel_defaults(),
 			drop = {
 				max_items = 1,
 				items = {
@@ -129,22 +112,6 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			drawtype = "mesh",
 
 			mesh = "boulder.obj",
-			--[[on_place = function(itemstack, placer, pointed_thing)
-				local pointed_pos = minetest.get_pointed_thing_position(pointed_thing, true)
-				local return_value = minetest.item_place(itemstack, placer, pointed_thing, math.random(0,3))
-				local pointed_node = minetest.get_node(pointed_pos)
-
-				if pointed_node and pointed_node.name then
-					local node_def = minetest.registered_nodes[pointed_node.name]
-					if node_def and node_def.buildable_to == true then
-					else
-					minetest.set_node(pointed_pos, {name = "boulder_dig:boulder",
-													 param2 = math.random(0,3)})
-
-					end
-				end
-				return return_value
-			end,]]
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
 			drop = {
@@ -154,13 +121,14 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 				}
 			},
 			tiles = {"default_stone.png"},
+			on_construct = function(pos, node)
+				check_for_tumbling(pos)
+			end,
 		})
 	end
-	--stone_and_dirt = {"default:stone","default:dirt","default:dry_dirt"}
 	minetest.register_ore({
 		ore_type = "scatter",
 		ore = "boulders:boulder",
-		--wherein = "default:stone",
 		wherein = wherein_boulders,
 		clust_scarcity = boulder_cluster_scarcity,
 		clust_num_ores = 7,
@@ -169,6 +137,7 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 		height_max = 10000,
 	})
 end
+
 
 add_fall_damage("boulders:boulder", 4)
 
@@ -199,7 +168,7 @@ function check_for_tumbling(pos)
 	local z_start = -1
 	local z_end = 1
 	for dx = x_start, x_end do
-	--minetest.log("x","dx:"..dx)	
+		--minetest.log("x","dx:"..dx)	
 		for dy = 0, 0 do
 			for dz = z_start, z_end do
 				--minetest.log("x","dz:"..dz)	
@@ -207,9 +176,12 @@ function check_for_tumbling(pos)
 				local node = minetest.get_node(boulder_pos)
 				local under_boulder_pos = {x = boulder_pos.x, y = boulder_pos.y -1, z = boulder_pos.z}
 				local node_under_boulder = minetest.get_node(under_boulder_pos)
-				if (node.name == "boulders:boulder")then 
+				--minetest.log("x","node.name:"..node.name)	
+				if (node.name == "boulders:boulder")then 					
 					local boulder_tumbled = false
+					--minetest.log("x","node_under_boulder.name:"..node_under_boulder.name)	
 					if (node_under_boulder.name == "boulders:boulder") then
+						
 						--check all 4 directions 1 node below
 						x_neg_pos = {x = boulder_pos.x -1, y = boulder_pos.y -1, z = boulder_pos.z}
 						x_neg_node = minetest.get_node(x_neg_pos)
@@ -229,6 +201,7 @@ function check_for_tumbling(pos)
 						above_z_pos_node = minetest.get_node(above_z_pos_pos)
 						local start_tumble_pos = nil
 						local boulder_tumbled = false
+						--minetest.log("x","x_neg_node.name:"..x_neg_node.name)	
 						if(x_neg_node.name == "air" and above_x_neg_node.name == "air")then 
 							minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
 							start_tumble_pos = {x = boulder_pos.x -1, y = boulder_pos.y , z = boulder_pos.z}
@@ -265,12 +238,10 @@ end
 
 local function boulderTouchAction(player)
 	local pos = player:get_pos()
-	--minetest.swap_node(pos, {name = "hero_mines:broken_mese_post_light", param2 = node.param2})
 	
 	local yaw = player:get_look_horizontal()
 	local yaw_degrees = (yaw + 2 * math.pi) % (2 * math.pi) * 180 / math.pi
 	--minetest.log("x","yaw_degrees:"..yaw_degrees)	
-
 	local x_start = 0
 	local x_end = 0
 
@@ -330,7 +301,6 @@ local function boulderTouchAction(player)
 				end
 			end
 		end
-		check_for_tumbling(boulder_new_pos)
 	end
 		--minetest.log("x","x:"..neighbor_pos.x ..",z:"..neighbor_pos.z)
 	
