@@ -238,41 +238,17 @@ end
 
 local function boulderTouchAction(player)
 	local pos = player:get_pos()
+	local x_offset, z_offset= get_direction_offsets(player)
 	
-	local yaw = player:get_look_horizontal()
-	local yaw_degrees = (yaw + 2 * math.pi) % (2 * math.pi) * 180 / math.pi
-	--minetest.log("x","yaw_degrees:"..yaw_degrees)	
-	local x_start = 0
-	local x_end = 0
-
-	local z_start = 0
-	local z_end = 0
-
-	if yaw_degrees >= 225 and yaw_degrees < 315 then
-		x_end = 1
-		x_start = 1
-	elseif yaw_degrees >= 45 and yaw_degrees < 135 then
-		x_start = -1
-		x_end = -1
-	end
-
-	if yaw_degrees >= 315 or yaw_degrees < 45 then
-		   z_end = 1
-		z_start = 1
-	elseif yaw_degrees >= 135 and yaw_degrees < 225 then
-		   z_end = -1
-		z_start = -1
-	end
-
 	--minetest.log("x","x_start:"..x_start..", x_end:"..x_end)	
 	--minetest.log("x","z_start:"..z_start..", z_end:"..z_end)	
 	local boulder_rolled = false
 	local boulder_new_pos = nil
 
-	for dx = x_start, x_end do
+	for dx = x_offset, x_offset do
 		--minetest.log("x","dx:"..dx)	
 		for dy = 0, 0 do
-			for dz = z_start, z_end do
+			for dz = z_offset, z_offset do
 				--minetest.log("x","dz:"..dz)	
 				local neighbor_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
 				boulder_new_pos = {x = pos.x + dx + dx, y = pos.y + dy, z = pos.z + dz +dz}
@@ -290,10 +266,10 @@ local function boulderTouchAction(player)
 	end
     if boulder_rolled then 
 		minetest.sound_play("falling_boulder", {pos = pos, gain = 0.5, max_hear_distance = 10}) 		
-		for dx = x_start, x_end do
+		for dx = x_offset, x_offset do
 			--minetest.log("x","dx:"..dx)	
 			for dy = -1, 2 do
-				for dz = z_start, z_end do
+				for dz = z_offset, z_offset do
 					--minetest.log("x","dz:"..dz)	
 					local neighbor_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
 					local node = minetest.get_node(neighbor_pos)
