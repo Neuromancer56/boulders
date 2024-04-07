@@ -117,7 +117,7 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			drop = {
 				max_items = 1,
 				items = {
-					{items = {"boulder_dig:boulder"}}
+					{items = {"boulders:boulder"}}
 				}
 			},
 			tiles = {"default_stone.png"},
