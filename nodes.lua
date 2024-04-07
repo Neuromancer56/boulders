@@ -50,7 +50,7 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 			drop = {
 				max_items = 1,
 				items = {
-					{items = {"boulder_dig:boulder"}}
+					{items = {"boulders:boulder"}}
 				}
 			},
 			tiles = {"default_stone.png"},
