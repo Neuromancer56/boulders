@@ -236,6 +236,16 @@ function check_for_tumbling(pos)
 end
 ]]
 
+function node_buildable_to(node)
+	node_def = minetest.registered_nodes[node.name]
+	if node_def and node_def.buildable_to == true then
+		return true
+	else
+		return false
+	end
+		
+end
+
 function check_for_tumbling(pos)
     local x_start = -1
     local x_end = 1
@@ -273,30 +283,33 @@ function check_for_tumbling(pos)
                         above_z_neg_node = minetest.get_node(above_z_neg_pos)
                         above_z_pos_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z + 1}
                         above_z_pos_node = minetest.get_node(above_z_pos_pos)
-
+						x_neg_buildable = node_buildable_to(x_neg_node)
+						x_pos_buildable = node_buildable_to(x_pos_node)
+						z_neg_buildable = node_buildable_to(z_neg_node)
+						z_pos_buildable = node_buildable_to(z_pos_node)
                         local start_tumble_pos = nil
                         local boulder_tumbled = false
 
                         local conditions = {
-                            [math.random()] = {x_neg_node.name == "air" and above_x_neg_node.name == "air", function()
+                            [math.random()] = {(x_neg_node.name == "air" or x_neg_buildable)and above_x_neg_node.name == "air", function()
                                 minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
                                 start_tumble_pos = {x = boulder_pos.x - 1, y = boulder_pos.y, z = boulder_pos.z}
                                 minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
                                 boulder_tumbled = true
                             end},
-                            [math.random()] = {x_pos_node.name == "air" and above_x_pos_node.name == "air", function()
+                            [math.random()] = {(x_pos_node.name == "air" or x_pos_buildable) and above_x_pos_node.name == "air", function()
                                 minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
                                 start_tumble_pos = {x = boulder_pos.x + 1, y = boulder_pos.y, z = boulder_pos.z}
                                 minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
                                 boulder_tumbled = true
                             end},
-                            [math.random()] = {z_neg_node.name == "air" and above_z_neg_node.name == "air", function()
+                            [math.random()] = {(z_neg_node.name == "air" or z_neg_buildable) and above_z_neg_node.name == "air", function()
                                 minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
                                 start_tumble_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z - 1}
                                 minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
                                 boulder_tumbled = true
                             end},
-                            [math.random()] = {z_pos_node.name == "air" and above_z_pos_node.name == "air", function()
+                            [math.random()] = {(z_pos_node.name == "air" or z_pos_buildable) and above_z_pos_node.name == "air", function()
                                 minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
                                 start_tumble_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z + 1}
                                 minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
