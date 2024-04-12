@@ -55,7 +55,7 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 			},
 			tiles = {"default_stone.png"},
 			on_construct = function(pos, node)
-				check_for_tumbling(pos)
+				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
 			end,
 		})
 	else
@@ -63,7 +63,7 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 			description = "Boulder",
 			tiles = {"boulder.png"},
 			on_construct = function(pos, node)
-				check_for_tumbling(pos)
+				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
 			end,
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
@@ -94,7 +94,7 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			description = "Boulder",
 			tiles = {"boulder.png"},
 			on_construct = function(pos, node)
-				check_for_tumbling(pos)
+				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
 			end,
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
@@ -122,7 +122,7 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			},
 			tiles = {"default_stone.png"},
 			on_construct = function(pos, node)
-				check_for_tumbling(pos)
+				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
 			end,
 		})
 	end
@@ -161,7 +161,7 @@ minetest.register_craft({
 })
 
 --[[
-function check_for_tumbling(pos)
+function check_for_tumbling(pos,"boulders:boulder","falling_boulder")
 	local x_start = -1
 	local x_end = 1
 	local y_start = -1
@@ -173,10 +173,10 @@ function check_for_tumbling(pos)
 		for dy = 0, 0 do
 			for dz = z_start, z_end do
 				--minetest.log("x","dz:"..dz)	
-				local boulder_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
-				local node = minetest.get_node(boulder_pos)
-				local under_boulder_pos = {x = boulder_pos.x, y = boulder_pos.y -1, z = boulder_pos.z}
-				local node_under_boulder = minetest.get_node(under_boulder_pos)
+				local node_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
+				local node = minetest.get_node(node_pos)
+				local under_node_pos = {x = node_pos.x, y = node_pos.y -1, z = node_pos.z}
+				local node_under_boulder = minetest.get_node(under_node_pos)
 				--minetest.log("x","node.name:"..node.name)	
 				if (node.name == "boulders:boulder")then 					
 					local boulder_tumbled = false
@@ -184,43 +184,43 @@ function check_for_tumbling(pos)
 					if (node_under_boulder.name == "boulders:boulder") then
 						
 						--check all 4 directions 1 node below
-						x_neg_pos = {x = boulder_pos.x -1, y = boulder_pos.y -1, z = boulder_pos.z}
+						x_neg_pos = {x = node_pos.x -1, y = node_pos.y -1, z = node_pos.z}
 						x_neg_node = minetest.get_node(x_neg_pos)
-						x_pos_pos = {x = boulder_pos.x +1, y = boulder_pos.y -1, z = boulder_pos.z}
+						x_pos_pos = {x = node_pos.x +1, y = node_pos.y -1, z = node_pos.z}
 						x_pos_node = minetest.get_node(x_pos_pos)
-						z_neg_pos = {x = boulder_pos.x, y = boulder_pos.y -1, z = boulder_pos.z -1}
+						z_neg_pos = {x = node_pos.x, y = node_pos.y -1, z = node_pos.z -1}
 						z_neg_node = minetest.get_node(z_neg_pos)
-						z_pos_pos = {x = boulder_pos.x, y = boulder_pos.y -1, z = boulder_pos.z +1}
+						z_pos_pos = {x = node_pos.x, y = node_pos.y -1, z = node_pos.z +1}
 						z_pos_node = minetest.get_node(z_pos_pos)
-						above_x_neg_pos = {x = boulder_pos.x -1, y = boulder_pos.y, z = boulder_pos.z}
+						above_x_neg_pos = {x = node_pos.x -1, y = node_pos.y, z = node_pos.z}
 						above_x_neg_node = minetest.get_node(above_x_neg_pos)
-						above_x_pos_pos = {x = boulder_pos.x +1, y = boulder_pos.y, z = boulder_pos.z}
+						above_x_pos_pos = {x = node_pos.x +1, y = node_pos.y, z = node_pos.z}
 						above_x_pos_node = minetest.get_node(above_x_pos_pos)
-						above_z_neg_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z -1}
+						above_z_neg_pos = {x = node_pos.x, y = node_pos.y, z = node_pos.z -1}
 						above_z_neg_node = minetest.get_node(above_z_neg_pos)
-						above_z_pos_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z +1}
+						above_z_pos_pos = {x = node_pos.x, y = node_pos.y, z = node_pos.z +1}
 						above_z_pos_node = minetest.get_node(above_z_pos_pos)
 						local start_tumble_pos = nil
 						local boulder_tumbled = false
 						--minetest.log("x","x_neg_node.name:"..x_neg_node.name)	
 						if(x_neg_node.name == "air" and above_x_neg_node.name == "air")then 
-							minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
-							start_tumble_pos = {x = boulder_pos.x -1, y = boulder_pos.y , z = boulder_pos.z}
+							minetest.set_node(node_pos, {name = "air", param2 = node.param2})
+							start_tumble_pos = {x = node_pos.x -1, y = node_pos.y , z = node_pos.z}
 							minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
 							boulder_tumbled = true
 						elseif (x_pos_node.name == "air" and above_x_pos_node.name == "air")then 
-							minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
-							start_tumble_pos = {x = boulder_pos.x + 1, y = boulder_pos.y , z = boulder_pos.z}
+							minetest.set_node(node_pos, {name = "air", param2 = node.param2})
+							start_tumble_pos = {x = node_pos.x + 1, y = node_pos.y , z = node_pos.z}
 							minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
 							boulder_tumbled = true
 						elseif(z_neg_node.name == "air" and above_z_neg_node.name == "air")then 
-							minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
-							start_tumble_pos = {x = boulder_pos.x, y = boulder_pos.y , z = boulder_pos.z-1}
+							minetest.set_node(node_pos, {name = "air", param2 = node.param2})
+							start_tumble_pos = {x = node_pos.x, y = node_pos.y , z = node_pos.z-1}
 							minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
 							boulder_tumbled = true
 						elseif (z_pos_node.name == "air" and above_z_pos_node.name == "air")then 
-							minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
-							start_tumble_pos = {x = boulder_pos.x, y = boulder_pos.y , z = boulder_pos.z+1}
+							minetest.set_node(node_pos, {name = "air", param2 = node.param2})
+							start_tumble_pos = {x = node_pos.x, y = node_pos.y , z = node_pos.z+1}
 							minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
 							boulder_tumbled = true
 						end
@@ -246,7 +246,7 @@ function node_buildable_to(node)
 		
 end
 
-function check_for_tumbling(pos)
+function check_for_tumbling(pos, node_name, tumble_off_of, sound_name)
     local x_start = -1
     local x_end = 1
     local y_start = -1
@@ -257,31 +257,38 @@ function check_for_tumbling(pos)
     for dx = x_start, x_end do
         for dy = 0, 0 do
             for dz = z_start, z_end do
-                local boulder_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
-                local node = minetest.get_node(boulder_pos)
-                local under_boulder_pos = {x = boulder_pos.x, y = boulder_pos.y - 1, z = boulder_pos.z}
-                local node_under_boulder = minetest.get_node(under_boulder_pos)
+                local node_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
+                local node = minetest.get_node(node_pos)
+                local under_node_pos = {x = node_pos.x, y = node_pos.y - 1, z = node_pos.z}
+                local node_under_boulder = minetest.get_node(under_node_pos)
 
-                if (node.name == "boulders:boulder") then
+                if (node.name == node_name) then
                     local boulder_tumbled = false
 
-                    if (node_under_boulder.name == "boulders:boulder") then
+					local match_found = false
+					for _, value in ipairs(tumble_off_of) do
+						if node_under_boulder.name == value then
+							match_found = true
+							break
+						end
+					end
+                    if (match_found) then
                         -- Check all 4 directions 1 node below
-                        x_neg_pos = {x = boulder_pos.x - 1, y = boulder_pos.y - 1, z = boulder_pos.z}
+                        x_neg_pos = {x = node_pos.x - 1, y = node_pos.y - 1, z = node_pos.z}
                         x_neg_node = minetest.get_node(x_neg_pos)
-                        x_pos_pos = {x = boulder_pos.x + 1, y = boulder_pos.y - 1, z = boulder_pos.z}
+                        x_pos_pos = {x = node_pos.x + 1, y = node_pos.y - 1, z = node_pos.z}
                         x_pos_node = minetest.get_node(x_pos_pos)
-                        z_neg_pos = {x = boulder_pos.x, y = boulder_pos.y - 1, z = boulder_pos.z - 1}
+                        z_neg_pos = {x = node_pos.x, y = node_pos.y - 1, z = node_pos.z - 1}
                         z_neg_node = minetest.get_node(z_neg_pos)
-                        z_pos_pos = {x = boulder_pos.x, y = boulder_pos.y - 1, z = boulder_pos.z + 1}
+                        z_pos_pos = {x = node_pos.x, y = node_pos.y - 1, z = node_pos.z + 1}
                         z_pos_node = minetest.get_node(z_pos_pos)
-                        above_x_neg_pos = {x = boulder_pos.x - 1, y = boulder_pos.y, z = boulder_pos.z}
+                        above_x_neg_pos = {x = node_pos.x - 1, y = node_pos.y, z = node_pos.z}
                         above_x_neg_node = minetest.get_node(above_x_neg_pos)
-                        above_x_pos_pos = {x = boulder_pos.x + 1, y = boulder_pos.y, z = boulder_pos.z}
+                        above_x_pos_pos = {x = node_pos.x + 1, y = node_pos.y, z = node_pos.z}
                         above_x_pos_node = minetest.get_node(above_x_pos_pos)
-                        above_z_neg_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z - 1}
+                        above_z_neg_pos = {x = node_pos.x, y = node_pos.y, z = node_pos.z - 1}
                         above_z_neg_node = minetest.get_node(above_z_neg_pos)
-                        above_z_pos_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z + 1}
+                        above_z_pos_pos = {x = node_pos.x, y = node_pos.y, z = node_pos.z + 1}
                         above_z_pos_node = minetest.get_node(above_z_pos_pos)
 						x_neg_buildable = node_buildable_to(x_neg_node)
 						x_pos_buildable = node_buildable_to(x_pos_node)
@@ -292,27 +299,27 @@ function check_for_tumbling(pos)
 
                         local conditions = {
                             [math.random()] = {(x_neg_node.name == "air" or x_neg_buildable)and above_x_neg_node.name == "air", function()
-                                minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
-                                start_tumble_pos = {x = boulder_pos.x - 1, y = boulder_pos.y, z = boulder_pos.z}
-                                minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
+                                minetest.set_node(node_pos, {name = "air", param2 = node.param2})
+                                start_tumble_pos = {x = node_pos.x - 1, y = node_pos.y, z = node_pos.z}
+                                minetest.set_node(start_tumble_pos, {name = node_name, param2 = node.param2})
                                 boulder_tumbled = true
                             end},
                             [math.random()] = {(x_pos_node.name == "air" or x_pos_buildable) and above_x_pos_node.name == "air", function()
-                                minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
-                                start_tumble_pos = {x = boulder_pos.x + 1, y = boulder_pos.y, z = boulder_pos.z}
-                                minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
+                                minetest.set_node(node_pos, {name = "air", param2 = node.param2})
+                                start_tumble_pos = {x = node_pos.x + 1, y = node_pos.y, z = node_pos.z}
+                                minetest.set_node(start_tumble_pos, {name = node_name, param2 = node.param2})
                                 boulder_tumbled = true
                             end},
                             [math.random()] = {(z_neg_node.name == "air" or z_neg_buildable) and above_z_neg_node.name == "air", function()
-                                minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
-                                start_tumble_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z - 1}
-                                minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
+                                minetest.set_node(node_pos, {name = "air", param2 = node.param2})
+                                start_tumble_pos = {x = node_pos.x, y = node_pos.y, z = node_pos.z - 1}
+                                minetest.set_node(start_tumble_pos, {name = node_name, param2 = node.param2})
                                 boulder_tumbled = true
                             end},
                             [math.random()] = {(z_pos_node.name == "air" or z_pos_buildable) and above_z_pos_node.name == "air", function()
-                                minetest.set_node(boulder_pos, {name = "air", param2 = node.param2})
-                                start_tumble_pos = {x = boulder_pos.x, y = boulder_pos.y, z = boulder_pos.z + 1}
-                                minetest.set_node(start_tumble_pos, {name = "boulders:boulder", param2 = node.param2})
+                                minetest.set_node(node_pos, {name = "air", param2 = node.param2})
+                                start_tumble_pos = {x = node_pos.x, y = node_pos.y, z = node_pos.z + 1}
+                                minetest.set_node(start_tumble_pos, {name = node_name, param2 = node.param2})
                                 boulder_tumbled = true
                             end}
                         }
@@ -326,7 +333,7 @@ function check_for_tumbling(pos)
                         end
 
                         if boulder_tumbled == true then
-                            minetest.sound_play("falling_boulder", {pos = pos, gain = 0.5, max_hear_distance = 10})
+                            minetest.sound_play(sound_name, {pos = pos, gain = 0.5, max_hear_distance = 10})
                             minetest.check_for_falling(start_tumble_pos)
                         end
                     end
