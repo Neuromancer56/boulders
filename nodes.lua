@@ -1,3 +1,17 @@
+local function logTable(tableToLog)
+    minetest.log("loggedTable", "Logging table contents:")
+    
+    -- Iterate over each key-value pair in the table
+    for key, value in pairs(tableToLog) do
+        -- Convert the value to a string for logging
+        local valueString = tostring(value)
+        
+        -- Log the key-value pair
+        minetest.log("loggedTable", key .. ": " .. valueString)
+    end
+    
+    minetest.log("loggedTable", "End of table logging.")
+end
 local function add_fall_damage(node, damage)
 
 	if minetest.registered_nodes[node] then
@@ -56,7 +70,7 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 			tiles = {"default_stone.png"},
 			on_construct = function(pos, node)
 				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
-			end,
+			end,		
 		})
 	else
 		minetest.register_node("boulders:boulder", {
@@ -64,7 +78,7 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 			tiles = {"boulder.png"},
 			on_construct = function(pos, node)
 				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
-			end,
+			end,			
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
 			drop = {
@@ -95,7 +109,7 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			tiles = {"boulder.png"},
 			on_construct = function(pos, node)
 				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
-			end,
+			end,						
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
 			drop = {
@@ -123,7 +137,7 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			tiles = {"default_stone.png"},
 			on_construct = function(pos, node)
 				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
-			end,
+			end,		
 		})
 	end
 	minetest.register_ore({
@@ -250,14 +264,15 @@ function check_for_tumbling(pos, node_name, tumble_off_of, sound_name)
     local x_start = -1
     local x_end = 1
     local y_start = -1
-    local y_end = 1
+    local y_end = 14
     local z_start = -1
     local z_end = 1
 
     for dx = x_start, x_end do
-        for dy = 0, 0 do
+        for dy = y_start, y_end do
             for dz = z_start, z_end do
                 local node_pos = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
+				--logTable(node_pos)
                 local node = minetest.get_node(node_pos)
                 local under_node_pos = {x = node_pos.x, y = node_pos.y - 1, z = node_pos.z}
                 local node_under_boulder = minetest.get_node(under_node_pos)
