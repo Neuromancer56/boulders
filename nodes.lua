@@ -42,6 +42,49 @@ function default.node_sound_boulder_defaults(table)
 	return table
 end
 
+function check_for_melt_boulder(pos)
+    -- Directions to check: up, down, left, right, forward, backward
+    local directions = {
+        {x = 1, y = 0, z = 0},
+        {x = -1, y = 0, z = 0},
+       -- {x = 0, y = 1, z = 0},
+        --{x = 0, y = -1, z = 0},
+        {x = 0, y = 0, z = 1},
+        {x = 0, y = 0, z = -1},
+    }
+
+    for _, dir in ipairs(directions) do
+        local check_pos = vector.add(pos, dir)
+        local node = minetest.get_node(check_pos)
+        if node.name == "default:lava_source" then
+            minetest.sound_play("default_cool_lava", {pos = pos, gain = 0.9, max_hear_distance = 20}) 
+			-- Particle effect
+            local minp = vector.add(pos, {x = -0.5, y = -0.5, z = -0.5})
+            local maxp = vector.add(pos, {x = 0.5, y = 0.5, z = 0.5})
+            
+            minetest.add_particlespawner({
+                amount = 10,
+                time = 0.5,
+                minpos = minp,
+                maxpos = maxp,
+                minvel = {x = 0, y = 2, z = 0},
+                maxvel = {x = 0, y = 2, z = 0},
+                minacc = {x = 0, y = 0, z = 0},
+                maxacc = {x = 0, y = 0, z = 0},
+                minexptime = 1,
+                maxexptime = 2,
+                minsize = 3,
+                maxsize = 5,
+                collisiondetection = false,
+                texture = "default_item_smoke.png",
+                glow = 10,
+            })
+			minetest.set_node(pos, {name = "default:lava_source"})
+            return
+        end
+    end
+end
+
 boulder_shape = minetest.settings:get("boulder_shape") or "default"
 
 	--wherein_boulders = {"default:stone","group:crumbly"}
@@ -70,7 +113,8 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 			},
 			tiles = {"default_stone.png"},
 			on_construct = function(pos, node)
-				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
+				check_for_melt_boulder(pos)
+				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder","default:cobble"},"falling_boulder")
 			end,		
 		})
 	else
@@ -78,7 +122,8 @@ if boulder_cluster_scarcity < 7 * 7 * 7 then
 			description = "Boulder",
 			tiles = {"boulder.png"},
 			on_construct = function(pos, node)
-				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
+				check_for_melt_boulder(pos)
+				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder","default:cobble"},"falling_boulder")
 			end,			
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
@@ -109,7 +154,8 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			description = "Boulder",
 			tiles = {"boulder.png"},
 			on_construct = function(pos, node)
-				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
+				check_for_melt_boulder(pos)
+				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder","default:cobble"},"falling_boulder")
 			end,						
 			groups = {cracky = 2, falling_node = 1, falling_node_hurt =1},
 			sounds = default.node_sound_boulder_defaults(),
@@ -137,6 +183,7 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			},
 			tiles = {"default_stone.png"},
 			on_construct = function(pos, node)
+				check_for_melt_boulder(pos)
 				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder","default:cobble"},"falling_boulder")
 			end,		
 		})
