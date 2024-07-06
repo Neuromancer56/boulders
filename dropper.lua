@@ -9,7 +9,7 @@ minetest.register_node("boulders:dropper", {
     paramtype = "light",
     is_ground_content = false,
 	on_construct = function(pos)
-        minetest.get_node_timer(pos):start(2.0)
+        minetest.get_node_timer(pos):start(6.0)
     end,
     on_timer = function(pos)
         local players = minetest.get_connected_players()
@@ -37,7 +37,7 @@ minetest.register_node("boulders:dropper", {
         return true
     end,
     after_place_node = function(pos, placer, itemstack, pointed_thing)
-        minetest.get_node_timer(pos):start(2.0)
+        minetest.get_node_timer(pos):start(6.0)
     end,
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
         minetest.get_node_timer(pos):stop()
