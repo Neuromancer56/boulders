@@ -1,3 +1,4 @@
+boulder_pushed = false
 local function logTable(tableToLog)
     minetest.log("loggedTable", "Logging table contents:")
     
@@ -136,7 +137,7 @@ minetest.log("x", "boulder_shape:"..boulder_shape)
 			},
 			tiles = {"default_stone.png"},
 			on_construct = function(pos, node)
-				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder"},"falling_boulder")
+				check_for_tumbling(pos,"boulders:boulder",{"boulder_dig:gemstone","boulders:boulder","default:cobble"},"falling_boulder")
 			end,		
 		})
 	end
@@ -348,6 +349,7 @@ function check_for_tumbling(pos, node_name, tumble_off_of, sound_name)
                         end
 
                         if boulder_tumbled == true then
+							boulder_pushed = false
                             minetest.sound_play(sound_name, {pos = pos, gain = 0.5, max_hear_distance = 10})
                             minetest.check_for_falling(start_tumble_pos)
                         end
@@ -358,13 +360,15 @@ function check_for_tumbling(pos, node_name, tumble_off_of, sound_name)
     end
 end
 
+
+
 local function boulderTouchAction(player)
 	local pos = player:get_pos()
 	local x_offset, z_offset= get_direction_offsets(player)
 	
 	--minetest.log("x","x_start:"..x_start..", x_end:"..x_end)	
 	--minetest.log("x","z_start:"..z_start..", z_end:"..z_end)	
-	local boulder_rolled = false
+	boulder_rolled = false
 	local boulder_new_pos = nil
 
 	for dx = x_offset, x_offset do
@@ -401,7 +405,7 @@ local function boulderTouchAction(player)
 		end
 	end
 		--minetest.log("x","x:"..neighbor_pos.x ..",z:"..neighbor_pos.z)
-	
+	boulder_pushed= boulder_rolled
 end
 
 registerNodeTouchAction("boulders:boulder", boulderTouchAction)
