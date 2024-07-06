@@ -8,6 +8,9 @@ minetest.register_node("boulders:dropper", {
     drawtype = "normal",
     paramtype = "light",
     is_ground_content = false,
+	on_construct = function(pos)
+        minetest.get_node_timer(pos):start(2.0)
+    end,
     on_timer = function(pos)
         local players = minetest.get_connected_players()
         local player_nearby = false
@@ -41,7 +44,7 @@ minetest.register_node("boulders:dropper", {
     end,
 })
 
-
+--[[
 -- Function to start timers for existing nodes
 local function start_dropper_timers()
     local positions = minetest.find_nodes_in_area(
@@ -59,3 +62,4 @@ end
 
 -- Call the function on mod load
 minetest.register_on_mods_loaded(start_dropper_timers)
+]]
