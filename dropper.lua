@@ -17,7 +17,7 @@ minetest.register_node("boulders:dropper", {
 
         for _, player in ipairs(players) do
             local player_pos = player:get_pos()
-            if vector.distance(pos, player_pos) <= 20 then
+            if vector.distance(pos, player_pos) <= 35 then
                 player_nearby = true
                 break
             end

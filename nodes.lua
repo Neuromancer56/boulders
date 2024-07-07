@@ -57,7 +57,7 @@ function check_for_melt_boulder(pos)
         local check_pos = vector.add(pos, dir)
         local node = minetest.get_node(check_pos)
         if node.name == "default:lava_source" then
-            minetest.sound_play("default_cool_lava", {pos = pos, gain = 0.9, max_hear_distance = 20}) 
+            minetest.sound_play("default_cool_lava", {pos = pos, gain = 0.9, max_hear_distance = 35}) 
 			-- Particle effect
             local minp = vector.add(pos, {x = -0.5, y = -0.5, z = -0.5})
             local maxp = vector.add(pos, {x = 0.5, y = 0.5, z = 0.5})
